@@ -1,0 +1,84 @@
+const videoPlayer = document.getElementById('videoPlayer');
+const fileNameDisplay = document.getElementById('fileNameDisplay');
+const imagePlaceholder = document.getElementById('imagePlaceholder');
+const playPauseButton = document.getElementById('playPauseBtn');
+const playPauseIcon = document.getElementById('playPauseIcon');
+const volumeControl = document.getElementById('volumeControl');
+const fullscreenButton = document.getElementById('fullscreenBtn');
+const progressBar = document.getElementById('progressBar');
+const timeDisplay = document.getElementById('timeDisplay');
+const skipBackButton = document.getElementById('skipBackBtn');
+const skipForwardButton = document.getElementById('skipForwardBtn');
+
+// Handle video selection
+window.electron.onvideoselected(async (filePath) => {
+    console.log("Selected Video: ", filePath);
+
+    const fileName = filePath.split("\\").pop().split("/").pop();
+    fileNameDisplay.textContent = `Playing: ${fileName}`;
+
+    imagePlaceholder.style.display = "none";
+    videoPlayer.style.display = "block";
+    videoPlayer.src = filePath;
+    videoPlayer.load();
+    videoPlayer.play();
+
+    // Set initial button state
+    playPauseButton.classList.remove('play');
+    playPauseButton.classList.add('pause');
+});
+
+// Play/Pause button
+playPauseButton.addEventListener('click', () => {
+    if (videoPlayer.paused) {
+        videoPlayer.play();
+        playPauseButton.classList.remove('play');
+        playPauseButton.classList.add('pause');
+    } else {
+        videoPlayer.pause();
+        playPauseButton.classList.remove('pause');
+        playPauseButton.classList.add('play');
+    }
+});
+
+// Volume control
+volumeControl.addEventListener('input', () => {
+    videoPlayer.volume = volumeControl.value;
+});
+
+// Fullscreen toggle
+fullscreenButton.addEventListener('click', () => {
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    } else {
+        videoPlayer.requestFullscreen();
+    }
+});
+
+// Update progress bar and time display
+videoPlayer.addEventListener('timeupdate', () => {
+    const progress = (videoPlayer.currentTime / videoPlayer.duration) * 100;
+    progressBar.value = progress;
+
+    const currentMinutes = Math.floor(videoPlayer.currentTime / 60);
+    const currentSeconds = Math.floor(videoPlayer.currentTime % 60);
+    const durationMinutes = Math.floor(videoPlayer.duration / 60);
+    const durationSeconds = Math.floor(videoPlayer.duration % 60);
+
+    timeDisplay.textContent = `${formatTime(currentMinutes, currentSeconds)} / ${formatTime(durationMinutes, durationSeconds)}`;
+});
+
+// Format time as MM:SS
+function formatTime(minutes, seconds) {
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Skip backward 10 seconds
+skipBackButton.addEventListener('click', () => {
+    videoPlayer.currentTime -= 10;
+});
+
+// Skip forward 10 seconds
+skipForwardButton.addEventListener('click', () => {
+    videoPlayer.currentTime += 10;
+});

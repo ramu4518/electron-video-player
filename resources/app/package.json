@@ -1,0 +1,18 @@
+{
+  "name": "B-Rabbit Video Player",
+  "version": "1.0.0",
+  "description": "A simple video player app",
+  "main": "main.js",
+  "lockfileVersion": 3,
+  "requires": true,
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^34.0.0"
+  },
+  "dependencies": {
+    "lucide-react": "^0.475.0",
+    "shadcn-ui": "^0.9.4"
+  }
+}
